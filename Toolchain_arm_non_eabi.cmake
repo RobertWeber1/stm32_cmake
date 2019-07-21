@@ -1,0 +1,24 @@
+include(CMakeForceCompiler)
+
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_VERSION 1)
+
+SET(CMAKE_C_COMPILER arm-none-eabi-gcc)
+SET(CMAKE_C_COMPILER_ID GCC)
+
+SET(CMAKE_CXX_COMPILER arm-none-eabi-g++)
+SET(CMAKE_CXX_COMPILER_ID GCC)
+
+set(CMAKE_TRY_COMPILE_TARGET_TYPE EXECUTABLE)
+set(CMAKE_C_COMPILER_WORKS 1)
+set(CMAKE_CXX_COMPILER_WORKS 1)
+
+SET(SIZE_TOOL arm-none-eabi-size)
+
+
+# search for programs in the build host directories
+SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+
+# for libraries and headers in the target directories
+SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
