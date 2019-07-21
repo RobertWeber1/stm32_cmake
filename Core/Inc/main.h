@@ -96,6 +96,8 @@ void Error_Handler(void);
 #define SWO_GPIO_Port               GPIOB
 
 
+int fputc(int ch, FILE *);
+
 #ifdef __cplusplus
 }
 #endif

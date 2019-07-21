@@ -18,48 +18,88 @@
 	*/
 /* USER CODE END Header */
 
-
+/* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "usb_device.h"
+#include "usbd_cdc_if.h"
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
 
+/* USER CODE END Includes */
 
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
 ETH_HandleTypeDef heth;
 
 UART_HandleTypeDef huart3;
 
-PCD_HandleTypeDef hpcd_USB_OTG_FS;
+/* USER CODE BEGIN PV */
 
+/* USER CODE END PV */
 
+/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ETH_Init(void);
 static void MX_USART3_UART_Init(void);
-static void MX_USB_OTG_FS_PCD_Init(void);
+/* USER CODE BEGIN PFP */
 
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
+
+/**
+	* @brief  The application entry point.
+	* @retval int
+	*/
+
+uint8_t data[] = "Hallo Welt\n";
 
 int main(void)
 {
 	HAL_Init();
-
 	SystemClock_Config();
 
 	MX_GPIO_Init();
 	MX_ETH_Init();
 	MX_USART3_UART_Init();
-	MX_USB_OTG_FS_PCD_Init();
-
+	MX_USB_DEVICE_Init();
 	while (1)
 	{
-		HAL_GPIO_TogglePin(LedGreen_GPIO_Port, LedGreen_Pin);
-		HAL_GPIO_TogglePin(LedRed_GPIO_Port, LedRed_Pin);
+		// HAL_GPIO_TogglePin(LedRed_GPIO_Port, LedRed_Pin);
 		HAL_GPIO_TogglePin(LedBlue_GPIO_Port, LedBlue_Pin);
+		// HAL_GPIO_TogglePin(LedGreen_GPIO_Port, LedGreen_Pin);
+		HAL_Delay(1000);
+		printf("%s", data);
 	}
-
 }
 
-/**
-	* @brief System Clock Configuration
-	* @retval None
-	*/
+int _write(int file, char *data, int len)
+{
+	 return
+		HAL_UART_Transmit(&huart3, (uint8_t*)data, len, 0xffff) == HAL_OK
+			? len
+			: 0;
+}
+
+
 void SystemClock_Config(void)
 {
 	RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -174,40 +214,6 @@ static void MX_USART3_UART_Init(void)
 }
 
 /**
-	* @brief USB_OTG_FS Initialization Function
-	* @param None
-	* @retval None
-	*/
-static void MX_USB_OTG_FS_PCD_Init(void)
-{
-
-	/* USER CODE BEGIN USB_OTG_FS_Init 0 */
-
-	/* USER CODE END USB_OTG_FS_Init 0 */
-
-	/* USER CODE BEGIN USB_OTG_FS_Init 1 */
-
-	/* USER CODE END USB_OTG_FS_Init 1 */
-	hpcd_USB_OTG_FS.Instance = USB_OTG_FS;
-	hpcd_USB_OTG_FS.Init.dev_endpoints = 4;
-	hpcd_USB_OTG_FS.Init.speed = PCD_SPEED_FULL;
-	hpcd_USB_OTG_FS.Init.dma_enable = DISABLE;
-	hpcd_USB_OTG_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
-	hpcd_USB_OTG_FS.Init.Sof_enable = ENABLE;
-	hpcd_USB_OTG_FS.Init.low_power_enable = DISABLE;
-	hpcd_USB_OTG_FS.Init.vbus_sensing_enable = ENABLE;
-	hpcd_USB_OTG_FS.Init.use_dedicated_ep1 = DISABLE;
-	if (HAL_PCD_Init(&hpcd_USB_OTG_FS) != HAL_OK)
-	{
-		Error_Handler();
-	}
-	/* USER CODE BEGIN USB_OTG_FS_Init 2 */
-
-	/* USER CODE END USB_OTG_FS_Init 2 */
-
-}
-
-/**
 	* @brief GPIO Initialization Function
 	* @param None
 	* @retval None
@@ -271,6 +277,27 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/**
+	* @brief  Period elapsed callback in non blocking mode
+	* @note   This function is called  when TIM1 interrupt took place, inside
+	* HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+	* a global variable "uwTick" used as application time base.
+	* @param  htim : TIM handle
+	* @retval None
+	*/
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	/* USER CODE BEGIN Callback 0 */
+
+	/* USER CODE END Callback 0 */
+	if (htim->Instance == TIM1) {
+		HAL_IncTick();
+	}
+	/* USER CODE BEGIN Callback 1 */
+
+	/* USER CODE END Callback 1 */
+}
 
 /**
 	* @brief  This function is executed in case of error occurrence.
