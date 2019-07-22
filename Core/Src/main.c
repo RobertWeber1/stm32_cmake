@@ -69,8 +69,9 @@ static void MX_USART3_UART_Init(void);
 	* @brief  The application entry point.
 	* @retval int
 	*/
+extern void user_main();
 
-uint8_t data[] = "Hallo Welt\n";
+
 
 int main(void)
 {
@@ -81,14 +82,9 @@ int main(void)
 	MX_ETH_Init();
 	MX_USART3_UART_Init();
 	MX_USB_DEVICE_Init();
-	while (1)
-	{
-		// HAL_GPIO_TogglePin(LedRed_GPIO_Port, LedRed_Pin);
-		HAL_GPIO_TogglePin(LedBlue_GPIO_Port, LedBlue_Pin);
-		// HAL_GPIO_TogglePin(LedGreen_GPIO_Port, LedGreen_Pin);
-		HAL_Delay(1000);
-		printf("%s", data);
-	}
+
+	user_main();
+
 }
 
 int _write(int file, char *data, int len)

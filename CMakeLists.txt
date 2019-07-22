@@ -1,9 +1,8 @@
 cmake_minimum_required (VERSION 2.6)
 
-project(usb_device CXX ASM)
+project(usb_device C CXX ASM)
 
 add_executable(${PROJECT_NAME}
-	startup_stm32f207xx.s
 	Core/Src/main.c
 	Core/Src/stm32f2xx_it.c
 	Core/Src/stm32f2xx_hal_msp.c
@@ -35,7 +34,10 @@ add_executable(${PROJECT_NAME}
 	Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c
 	Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c
 	Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c
-	Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c)
+	Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c
+	startup_stm32f207xx.s
+	src/user_main.cc
+	)
 
 target_include_directories(${PROJECT_NAME}
 	PRIVATE Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc
@@ -46,7 +48,8 @@ target_include_directories(${PROJECT_NAME}
 	PRIVATE Drivers/CMSIS/Device/ST/STM32F2xx/Include
 	PRIVATE Drivers/STM32F2xx_HAL_Driver/Inc
 	PRIVATE Drivers/STM32F2xx_HAL_Driver/Inc/Legacy
-	PRIVATE Core/Inc)
+	PRIVATE Core/Inc
+	PRIVATE src)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
 	-DSTM32F207xx
@@ -56,17 +59,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${SIZE_TOOL} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
 )
 
-
-# set(COMMON_FLAGS
-# 	"-mcpu=${MCU_ARCH} -Os -mthumb -mfloat-abi=${MCU_FLOAT_ABI} -ffunction-sections -fdata-sections")
-
-# set(CMAKE_CXX_FLAGS "${COMMON_FLAGS} -fno-rtti -fno-exceptions") #-std=c++11
-# set(CMAKE_C_FLAGS "${COMMON_FLAGS} -std=gnu99")
-# set(CMAKE_EXE_LINKER_FLAGS "-specs=nano.specs -mthumb -lc -lm -lnosys -T${CMAKE_SOURCE_DIR}/${MCU_LINKER_SCRIPT} -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.map,--cref -Wl,--gc-sections")
-# set(MCU_LINKER_SCRIPT STM32F207ZGTx_FLASH.ld)
-# set(MCU_FLOAT_ABI )
-# set(MCU_FPU fpv4-sp-d16)
-
+set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 target_compile_options(${PROJECT_NAME} PRIVATE
 	-mcpu=cortex-m3
@@ -81,8 +74,8 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 	-ffunction-sections
 	-fdata-sections
 )
-# -fno-rtti
-# -fno-exceptions
+
+set(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions")
 
 target_link_options(${PROJECT_NAME} PRIVATE
 	-mcpu=cortex-m3
